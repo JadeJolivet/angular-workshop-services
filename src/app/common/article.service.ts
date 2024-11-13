@@ -6,30 +6,25 @@ import { Article } from './article';
 })
 export class ArticleService {
 
-  constructor() { }
+  articles: Article[] = this.getArticlesFromLocalStorage();
 
+  constructor() {}
+
+  createArticle(article: Article): void {
+    this.articles.push(article);
+    localStorage.setItem('articles', JSON.stringify(this.articles)); 
+  }
+  
   getArticlesFromLocalStorage(): Article[] {
     const stringData = localStorage.getItem('articles');
     return JSON.parse(stringData || '[]');
   }
 
-  saveArticlesToLocalStorage(articles: Article[]): void {
-    localStorage.setItem('articles', JSON.stringify(articles));
+  deleteArticle(article: Article): void {
+    const index = this.articles.findIndex((a) => a.id === article.id);
+    if (index > -1) {
+      this.articles.splice(index, 1);
+      localStorage.setItem('articles', JSON.stringify(this.articles)); 
+    }
   }
-
-  addArticle(article: Article, articles: Article[]): Article[] {
-    articles.push(article);
-    this.saveArticlesToLocalStorage(articles);
-    return [...articles];
-  }
-
-  deleteArticle(article: Article, articles: Article[]): Article[] {
-    const index = articles.findIndex((x) => x.id === article.id);
-    if (index !== -1) {
-      articles.splice(index, 1);
-      this.saveArticlesToLocalStorage(articles);
-        }
-        return [...articles];
-  }
-
 }
